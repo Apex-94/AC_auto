@@ -29,3 +29,14 @@ def char_Creation():
 
     pname = player_name()
     pgender = player_gender()
+
+    def set_attributes():
+        #name, hp, kt, level, points
+        return Player(
+            name=pname,
+            hp=100,
+            kt=0,
+            level=0,
+            points=0,
+            gender=pgender
+        )

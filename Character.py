@@ -21,6 +21,7 @@ class Character:
 
 class Player(Character):
     def __init__(self, gender, _class, name, hp, kt, level, points):
+        super().__init__(name, hp, kt, level, points)
         self._class = _class
         self.gender = gender
             
