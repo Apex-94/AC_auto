@@ -22,13 +22,27 @@ import time
 
 import cv2
 import mss
-import numpy
+import numpy as np
+import pyautogui
 from directkeys import PressKey, W, A, S, D, ReleaseKey
+
+def draw_lines(img, lines):
+    try:
+        for line in lines:
+            coords = line[0]
+            cv2.line(img, (coords[0],coords[1]), (coords[2],coords[3]), [255,255,255], 3)
+    except:
+        pass
 
 
 def process_img(og_img):
     processed_img = cv2.cvtColor(og_img, cv2.COLOR_BGR2GRAY)
-    processed_img = cv2.Canny(processed_img, threshold1=200, threshold2=300)
+    processed_img = cv2.Canny(processed_img, threshold1=120, threshold2=220)
+    processed_img = cv2.GaussianBlur(processed_img, (5,5), 0)
+    vertices = np.array([[10,500], [10,300], [300,200], [500,200] ,[800,300], [800,500]])
+    processed_img = roi(processed_img,[vertices])
+    lines = cv2.HoughLinesP(processed_img, 1, np.pi/120, 180, 20, 15) #edges
+    draw_lines(processed_img, lines)
     return processed_img
 
 # for i in list(range(5))[::-1]:
@@ -46,6 +60,13 @@ def process_img(og_img):
 
 
 
+def roi(img, vertices):
+    mask = np.zeros_like(img)
+    cv2.fillPoly(mask, vertices, 255)
+    masked = cv2.bitwise_and(img, mask)
+    return masked
+
+
 with mss.mss() as sct:
     # Part of the screen to capture
     monitor = {"top": 40, "left": 0, "width": 800, "height": 640}
@@ -54,7 +75,7 @@ with mss.mss() as sct:
         last_time = time.time()
 
         # Get raw pixels from the screen, save it to a Numpy array
-        screen = numpy.array(sct.grab(monitor))
+        screen = np.array(sct.grab(monitor))
 
         new_screen = process_img(screen)
         # Display the picture
