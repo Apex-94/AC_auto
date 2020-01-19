@@ -170,7 +170,10 @@ def process_img(og_img):
 def roi(img, vertices):
     mask = np.zeros_like(img)
     cv2.fillPoly(mask, vertices, 255)
+    # t2 = cv2.threshold(img, 127, 255, 0)
+    # contours = cv2.findContours(t2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     masked = cv2.bitwise_and(img, mask)
+
     return masked
 
 
