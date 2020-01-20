@@ -7,6 +7,8 @@ from numpy.linalg import lstsq
 from statistics import mean
 def canny_edge_detector(image):
     # Convert the image color to grayscale
+    # image=np.uint8(image)
+    # y = image.astype(np.int32)
     gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 
     # Reduce noise from the image
@@ -43,6 +45,7 @@ def create_coordinates(image, line_parameters):
 def average_slope_intercept(image, lines):
     left_fit = []
     right_fit = []
+    lines = lines*10
     for line in lines:
         x1, y1, x2, y2 = line.reshape(4)
 
@@ -62,14 +65,18 @@ def average_slope_intercept(image, lines):
     return np.array([left_line, right_line])
 
 
-# def display_lines(image, lines):
-#     line_image = np.zeros_like(image)
-#     # cv2.fillPoly(line_image, lines, 255)
-#     # line_image = cv2.bitwise_and(image, line_image)
-#     if lines is not None:
-#         for x1, y1, x2, y2 in lines:
-#             cv2.line(line_image, (x1, y1), (x2, y2), (255, 0, 0), 10)
-#     return line_image
+def display_lines(image, lines):
+    line_image = np.zeros_like(image)
+    # cv2.fillPoly(line_image, lines, 255)
+    # line_image = cv2.bitwise_and(image, line_image)
+    c=10
+    lines=lines//10
+    # print(lines/10)
+    if lines is not None:
+        for x1, y1, x2, y2 in lines:
+            cv2.line(line_image, (x1, y1), (x2, y2), (255, 0, 0), 10)
+    return line_image
+
 def draw_lanes(img, lines, color=[0, 255, 255], thickness=3):
     # if this fails, go with some default line
     try:
@@ -175,9 +182,9 @@ while True:
                             maxLineGap=5)
 
     averaged_lines = average_slope_intercept(frame, lines)
-    line_image = draw_lanes(frame, averaged_lines)
-    # combo_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
-    cv2.imshow("results", line_image)
+    line_image = display_lines(frame, averaged_lines)
+    combo_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
+    cv2.imshow("results", combo_image)
 
     # When the below two will be true and will press the 'q' on
     # our keyboard, we will break out from the loop
