@@ -196,7 +196,9 @@ with mss.mss() as sct:
 
 
         cv2.imshow("window", new_screen)
-        cv2.imshow('window2', cv2.cvtColor(og_img, cv2.COLOR_BGR2RGB))
+        cv2.imshow('window2', cv2.cvtColor(og_img, cv2.COLOR_BGR2GRAY))
+
+
 
         # Display the picture in grayscale
         # cv2.imshow('OpenCV/Numpy grayscale',
